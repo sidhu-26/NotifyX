@@ -16,6 +16,7 @@ from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as drf_serializers
 
 from orders.models import Order
+from notifications.services.event_service import create_event
 
 logger = logging.getLogger("payments")
 
@@ -71,7 +72,7 @@ class RazorpayWebhookView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Extract order ID from payload
+        # Extract order ID and payment ID from payload
         # Razorpay nests payment info under payload.payment.entity
         try:
             payment_entity = payload["payload"]["payment"]["entity"]
@@ -91,6 +92,13 @@ class RazorpayWebhookView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        logger.info(f"Processing webhook: event={event}, order_id={razorpay_order_id}, payment_id={razorpay_payment_id}")
+
+        # --- Idempotency check: reject duplicate payment IDs ---
+        if razorpay_payment_id and Order.objects.filter(razorpay_payment_id=razorpay_payment_id).exists():
+            logger.info(f"Duplicate webhook ignored — payment {razorpay_payment_id} already processed")
+            return Response({"detail": "Already processed"})
+
         # Find the order
         try:
             order = Order.objects.get(razorpay_order_id=razorpay_order_id)
@@ -101,19 +109,50 @@ class RazorpayWebhookView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        # Handle events
+        # Handle events with idempotency — only update if status actually changes
         if event == "payment.captured":
+            if order.status == Order.Status.PAID:
+                logger.info(f"Order #{order.id} already PAID — skipping duplicate webhook")
+                return Response({"detail": "Already processed"})
+
             order.status = Order.Status.PAID
-            order.save(update_fields=["status"])
+            order.razorpay_payment_id = razorpay_payment_id
+            order.save(update_fields=["status", "razorpay_payment_id"])
             logger.info(f"Order #{order.id} marked as PAID (payment: {razorpay_payment_id})")
 
+            # --- Emit Async Event ---
+            create_event(
+                event_type="payment_success",
+                user_id=order.user.id,
+                payload={
+                    "order_id": order.id,
+                    "amount": order.amount
+                }
+            )
+
         elif event == "payment.failed":
+            if order.status == Order.Status.FAILED:
+                logger.info(f"Order #{order.id} already FAILED — skipping duplicate webhook")
+                return Response({"detail": "Already processed"})
+
             order.status = Order.Status.FAILED
-            order.save(update_fields=["status"])
+            order.razorpay_payment_id = razorpay_payment_id
+            order.save(update_fields=["status", "razorpay_payment_id"])
             logger.info(f"Order #{order.id} marked as FAILED (payment: {razorpay_payment_id})")
+
+            # --- Emit Async Event ---
+            create_event(
+                event_type="payment_failed",
+                user_id=order.user.id,
+                payload={
+                    "order_id": order.id,
+                    "amount": order.amount
+                }
+            )
 
         else:
             logger.info(f"Unhandled webhook event: {event}")
             return Response({"detail": f"Event '{event}' not handled"})
 
         return Response({"detail": "Webhook processed successfully"})
+

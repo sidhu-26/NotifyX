@@ -24,3 +24,112 @@
   }
 }
 [2026-04-01 16:19:46,691] INFO payments views.post:108 — Order #1 marked as PAID (payment: None)
+[2026-04-01 16:22:17,467] INFO payments views.post:57 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "rzp_order_JKHBGVCFDXT"
+      }
+    }
+  }
+}
+[2026-04-01 16:22:17,467] INFO payments views.post:94 — Processing webhook: event=payment.captured, order_id=rzp_order_JKHBGVCFDXT, payment_id=None
+[2026-04-01 16:22:17,479] INFO payments views.post:114 — Order #1 already PAID — skipping duplicate webhook
+[2026-04-01 16:25:50,037] INFO payments views.post:58 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "rzp_order_JKHBGVCFDXT"
+      }
+    }
+  }
+}
+[2026-04-01 16:25:50,037] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=rzp_order_JKHBGVCFDXT, payment_id=None
+[2026-04-01 16:25:50,053] INFO payments views.post:115 — Order #1 already PAID — skipping duplicate webhook
+[2026-04-01 16:25:52,812] INFO payments views.post:58 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "rzp_order_JKHBGVCFDXT"
+      }
+    }
+  }
+}
+[2026-04-01 16:25:52,813] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=rzp_order_JKHBGVCFDXT, payment_id=None
+[2026-04-01 16:25:52,824] INFO payments views.post:115 — Order #1 already PAID — skipping duplicate webhook
+[2026-04-01 16:25:53,991] INFO payments views.post:58 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "rzp_order_JKHBGVCFDXT"
+      }
+    }
+  }
+}
+[2026-04-01 16:25:53,991] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=rzp_order_JKHBGVCFDXT, payment_id=None
+[2026-04-01 16:25:54,008] INFO payments views.post:115 — Order #1 already PAID — skipping duplicate webhook
+[2026-04-01 16:30:52,395] INFO payments views.post:58 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "rzp_order_JKHBGVCFDXT"
+      }
+    }
+  }
+}
+[2026-04-01 16:30:52,396] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=rzp_order_JKHBGVCFDXT, payment_id=None
+[2026-04-01 16:30:52,407] INFO payments views.post:115 — Order #1 already PAID — skipping duplicate webhook
+[2026-04-01 16:42:54,169] INFO payments views.post:58 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "rzp_order_JKHBGVCFDXT"
+      }
+    }
+  }
+}
+[2026-04-01 16:42:54,170] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=rzp_order_JKHBGVCFDXT, payment_id=None
+[2026-04-01 16:42:54,187] INFO payments views.post:115 — Order #1 already PAID — skipping duplicate webhook
+[2026-04-01 16:43:27,227] INFO orders views.perform_create:53 — Order #2 created by user@example.com — ₹21476.47
+[2026-04-01 16:44:00,956] INFO payments views.post:58 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "order_SYCxAdLnK7GvBm"
+      }
+    }
+  }
+}
+[2026-04-01 16:44:00,956] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=order_SYCxAdLnK7GvBm, payment_id=None
+[2026-04-01 16:44:00,977] INFO payments views.post:121 — Order #2 marked as PAID (payment: None)
+[2026-04-01 16:44:09,639] INFO payments views.post:58 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "order_SYCxAdLnK7GvBm"
+      }
+    }
+  }
+}
+[2026-04-01 16:44:09,639] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=order_SYCxAdLnK7GvBm, payment_id=None
+[2026-04-01 16:44:09,651] INFO payments views.post:115 — Order #2 already PAID — skipping duplicate webhook
+[2026-04-01 16:44:12,491] INFO payments views.post:58 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "order_SYCxAdLnK7GvBm"
+      }
+    }
+  }
+}
+[2026-04-01 16:44:12,491] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=order_SYCxAdLnK7GvBm, payment_id=None
+[2026-04-01 16:44:12,504] INFO payments views.post:115 — Order #2 already PAID — skipping duplicate webhook

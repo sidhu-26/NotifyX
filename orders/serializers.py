@@ -11,10 +11,7 @@ class CreateOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ["amount", "razorpay_order_id"]
-        extra_kwargs = {
-            "razorpay_order_id": {"required": False},
-        }
+        fields = ["amount"]
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -22,5 +19,5 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ["id", "user", "amount", "status", "razorpay_order_id", "created_at"]
+        fields = ["id", "user", "amount", "status", "razorpay_order_id", "razorpay_payment_id", "created_at"]
         read_only_fields = fields

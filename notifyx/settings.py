@@ -149,6 +149,10 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
+# --- Razorpay Configuration ---
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "rzp_test_SYBbMtXFDPXg5s")
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "fIpIpGuwr8hwOjL6ZBWYpUba")
+
 # --- Logging ---
 from core.logging import LOGGING_CONFIG
 LOGGING = LOGGING_CONFIG

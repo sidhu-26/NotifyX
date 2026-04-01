@@ -4,7 +4,10 @@ Order views — create order and list user's orders.
 
 import logging
 
+import razorpay
+from django.conf import settings
 from rest_framework import status
+from rest_framework.exceptions import APIException
 from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -26,7 +29,27 @@ class CreateOrderView(CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        order = serializer.save(user=self.request.user)
+        amount = serializer.validated_data["amount"]
+
+        # 1. Initialize Razorpay client
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+        # 2. Create order in Razorpay
+        try:
+            razorpay_order = client.order.create({
+                "amount": amount,
+                "currency": "INR",
+                "payment_capture": "1"  # auto capture
+            })
+        except Exception as e:
+            logger.error(f"Razorpay order creation failed: {e}")
+            raise APIException("Failed to create order with payment gateway")
+
+        # 3. Save to our database with the razorpay_order_id
+        order = serializer.save(
+            user=self.request.user,
+            razorpay_order_id=razorpay_order["id"]
+        )
         logger.info(f"Order #{order.id} created by {self.request.user.email} — ₹{order.amount / 100:.2f}")
 
     def create(self, request, *args, **kwargs):

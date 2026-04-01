@@ -30,6 +30,13 @@ class Order(models.Model):
         unique=True,
         help_text="Razorpay order ID for webhook matching",
     )
+    razorpay_payment_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        unique=True,
+        help_text="Razorpay payment ID — used for idempotency (reject duplicate webhooks)",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
