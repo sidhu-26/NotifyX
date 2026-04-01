@@ -169,3 +169,54 @@
 }
 [2026-04-01 16:57:29,806] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=order_SYCxAdLnK7GvBm, payment_id=None
 [2026-04-01 16:57:29,816] INFO payments views.post:115 — Order #2 already PAID — skipping duplicate webhook
+[2026-04-01 16:59:06,306] INFO orders views.perform_create:53 — Order #3 created by user@example.com — ₹2147.64
+[2026-04-01 16:59:15,583] INFO payments views.post:58 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "order_SYDDhgN3Xtdbuo"
+      }
+    }
+  }
+}
+[2026-04-01 16:59:15,583] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=order_SYDDhgN3Xtdbuo, payment_id=None
+[2026-04-01 16:59:15,595] INFO payments views.post:121 — Order #3 marked as PAID (payment: None)
+[2026-04-01 17:00:55,938] INFO payments views.post:58 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "order_SYDDhgN3Xtdbuo"
+      }
+    }
+  }
+}
+[2026-04-01 17:00:55,938] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=order_SYDDhgN3Xtdbuo, payment_id=None
+[2026-04-01 17:00:55,954] INFO payments views.post:115 — Order #3 already PAID — skipping duplicate webhook
+[2026-04-01 17:07:54,270] INFO orders views.perform_create:53 — Order #4 created by user@example.com — ₹2147.64
+[2026-04-01 17:08:06,862] INFO payments views.post:58 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "order_SYDMzyisAcMmXo"
+      }
+    }
+  }
+}
+[2026-04-01 17:08:06,862] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=order_SYDMzyisAcMmXo, payment_id=None
+[2026-04-01 17:08:06,876] INFO payments views.post:121 — Order #4 marked as PAID (payment: None)
+[2026-04-01 17:12:55,968] INFO orders views.perform_create:53 — Order #5 created by user@example.com — ₹2147.64
+[2026-04-01 17:13:07,076] INFO payments views.post:58 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "order_SYDSJIfS7zil9J"
+      }
+    }
+  }
+}
+[2026-04-01 17:13:07,076] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=order_SYDSJIfS7zil9J, payment_id=None
+[2026-04-01 17:13:07,090] INFO payments views.post:121 — Order #5 marked as PAID (payment: None)
