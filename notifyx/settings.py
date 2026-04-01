@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "accounts",
     "orders",
     "payments",
+    "notifications",
 ]
 
 
@@ -152,6 +153,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # --- Razorpay Configuration ---
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "rzp_test_SYBbMtXFDPXg5s")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "fIpIpGuwr8hwOjL6ZBWYpUba")
+
+# --- Celery Configuration ---
+CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://localhost:6379/1")
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
 
 # --- Logging ---
 from core.logging import LOGGING_CONFIG

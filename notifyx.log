@@ -133,3 +133,39 @@
 }
 [2026-04-01 16:44:12,491] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=order_SYCxAdLnK7GvBm, payment_id=None
 [2026-04-01 16:44:12,504] INFO payments views.post:115 — Order #2 already PAID — skipping duplicate webhook
+[2026-04-01 16:55:38,237] INFO payments views.post:58 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "order_SYCxAdLnK7GvBm"
+      }
+    }
+  }
+}
+[2026-04-01 16:55:38,238] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=order_SYCxAdLnK7GvBm, payment_id=None
+[2026-04-01 16:55:38,254] INFO payments views.post:115 — Order #2 already PAID — skipping duplicate webhook
+[2026-04-01 16:56:09,835] INFO payments views.post:58 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "order_SYCxAdLnK7GvBm"
+      }
+    }
+  }
+}
+[2026-04-01 16:56:09,835] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=order_SYCxAdLnK7GvBm, payment_id=None
+[2026-04-01 16:56:09,847] INFO payments views.post:115 — Order #2 already PAID — skipping duplicate webhook
+[2026-04-01 16:57:29,805] INFO payments views.post:58 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "order_SYCxAdLnK7GvBm"
+      }
+    }
+  }
+}
+[2026-04-01 16:57:29,806] INFO payments views.post:95 — Processing webhook: event=payment.captured, order_id=order_SYCxAdLnK7GvBm, payment_id=None
+[2026-04-01 16:57:29,816] INFO payments views.post:115 — Order #2 already PAID — skipping duplicate webhook
