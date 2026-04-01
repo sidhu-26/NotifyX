@@ -10,33 +10,54 @@ from .models import Notification
 logger = logging.getLogger("notifications.tasks")
 User = get_user_model()
 
-@shared_task(name="notifications.process_event")
-def process_notification_event(event_type, user_id, payload):
+@shared_task(name="notifications.process_event", bind=True, max_retries=5)
+def process_notification_event(self, event_type, user_id, payload):
     """
-    Asynchronously processes a domain event (like payment success/failure).
-    Creates a Notification model and actually sends an email channel.
+    Asynchronously processes a domain event (like payment success/failure),
+    with idempotency, state tracking, and exponential backoff retries.
     """
-    logger.info(f"[CELERY TASK START] Event: {event_type} | UserID: {user_id}")
+    # 1. Generate Idempotency Key
+    order_id = payload.get("order_id", "unknown_order")
+    idempotency_key = f"{event_type}_{user_id}_{order_id}"
     
-    # 1. Create robust Notification Record
-    notification = Notification.objects.create(
-        user_id=user_id,
-        event_type=event_type,
-        payload=payload,
-        status="PENDING"
-    )
-    
-    # 2. Fetch User
-    try:
-        user = User.objects.get(id=user_id)
-    except User.DoesNotExist:
-        logger.error(f"User {user_id} not found. Hard failing.")
-        notification.status = "FAILED"
-        notification.save(update_fields=["status"])
-        return False
+    logger.info(f"[CELERY TASK START] Key: {idempotency_key} | Retry: {self.request.retries}")
 
-    # 3. Simulate Email Channel (Uses Console Backend for local tests)
+    # 2. Prevent Duplicates (Idempotency)
+    notification, created = Notification.objects.get_or_create(
+        idempotency_key=idempotency_key,
+        defaults={
+            "user_id": user_id,
+            "event_type": event_type,
+            "payload": payload,
+            "status": Notification.Status.PENDING,
+            "retry_count": 0,
+        }
+    )
+
+    if not created and notification.status in [Notification.Status.SENT, Notification.Status.PROCESSING]:
+        logger.info(f"[IDEMPOTENCY] Notification {idempotency_key} already {notification.status}. Skipping duplicate.")
+        return True
+
+    # 3. Mark as PROCESSING
+    notification.status = Notification.Status.PROCESSING
+    notification.retry_count = self.request.retries
+    notification.save(update_fields=["status", "retry_count"])
+
     try:
+        # Simulate Failure if requested
+        if payload.get("simulate_failure"):
+            raise Exception("Simulated Failure for Testing")
+
+        # 4. Fetch User
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            logger.error(f"User {user_id} not found. Hard failing.")
+            notification.status = list(Notification.Status.FAILED)[0] if isinstance(Notification.Status.FAILED, tuple) else Notification.Status.FAILED
+            notification.save(update_fields=["status"])
+            return False
+
+        # 5. Send Email
         subject = f"NotifyX Update: {event_type}"
         message = (
             f"Hello {user.email},\n\n"
@@ -46,7 +67,6 @@ def process_notification_event(event_type, user_id, payload):
             f"Thanks,\nNotifyX Support"
         )
         
-        # Django's built in send_mail blocks, but this is fine since we are in Celery!
         send_mail(
             subject=subject,
             message=message,
@@ -55,14 +75,32 @@ def process_notification_event(event_type, user_id, payload):
             fail_silently=False,
         )
         
-        # Success!
-        notification.status = "SENT"
+        # 6. Success
+        notification.status = Notification.Status.SENT
         notification.save(update_fields=["status"])
-        logger.info(f"[CELERY TASK DONE] Successfully sent email and updated status to SENT for {user.email}")
+        logger.info(f"[CELERY TASK DONE] Successfully sent email and updated status to SENT for {idempotency_key}")
         return True
         
-    except Exception as e:
-        logger.error(f"Failed to send email to {user.email}: {e}")
-        notification.status = "FAILED"
-        notification.save(update_fields=["status"])
-        return False
+    except Exception as exc:
+        # 7. Handle Failure & Auto-Retry
+        logger.error(f"[CELERY TASK FAILED] Error for {idempotency_key}: {str(exc)}")
+        
+        # Track DB retry count explicitly
+        notification.retry_count = self.request.retries + 1
+        
+        # Check against retry limit before raising retry
+        if self.request.retries >= self.max_retries:
+            logger.error(f"[MAX RETRIES REACHED] Forcing graceful exit for {idempotency_key}.")
+            notification.status = Notification.Status.FAILED
+            notification.save(update_fields=["status", "retry_count"])
+            return False
+            
+        # Set Explicit RETRY state
+        notification.status = Notification.Status.RETRY
+        notification.save(update_fields=["status", "retry_count"])
+        
+        # Calculate exponential backoff: 2, 4, 8, 16, 32 seconds
+        countdown = 2 ** (self.request.retries + 1)
+        logger.info(f"[CELERY RETRY] Scheduled retry {self.request.retries + 1}/{self.max_retries} in {countdown}s...")
+        
+        raise self.retry(exc=exc, countdown=countdown)

@@ -10,7 +10,8 @@ build/
 venv/
 .venv/
 env/
-
+dump.rdb
+notifyx.log
 # Django
 *.sqlite3
 db.sqlite3
