@@ -158,6 +158,21 @@ RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "fIpIpGuwr8hwOjL6ZBWYpUba
 CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://localhost:6379/1")
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
+CELERY_TASK_DEFAULT_QUEUE = "default"
+CELERY_TASK_QUEUES = {
+    "high_priority": {
+        "exchange": "high_priority",
+        "routing_key": "high_priority",
+    },
+    "default": {
+        "exchange": "default",
+        "routing_key": "default",
+    },
+    "low_priority": {
+        "exchange": "low_priority",
+        "routing_key": "low_priority",
+    },
+}
 
 # --- Email Configuration ---
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
