@@ -1,0 +1,26 @@
+[2026-04-01 16:09:43,425] INFO accounts views.perform_create:42 — User registered: user@example.com
+[2026-04-01 16:11:33,554] INFO accounts views.post:99 — Verification token generated for user@example.com
+[2026-04-01 16:11:49,128] INFO accounts views.post:158 — Email verified for user@example.com
+[2026-04-01 16:16:39,701] INFO orders views.perform_create:30 — Order #1 created by user@example.com — ₹214.77
+[2026-04-01 16:18:38,536] INFO payments views.post:57 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "rzp_order_JKHBGVCFDXT"
+      }
+    }
+  }
+}
+[2026-04-01 16:18:38,549] INFO payments views.post:108 — Order #1 marked as PAID (payment: None)
+[2026-04-01 16:19:46,674] INFO payments views.post:57 — Webhook received: {
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "rzp_order_JKHBGVCFDXT"
+      }
+    }
+  }
+}
+[2026-04-01 16:19:46,691] INFO payments views.post:108 — Order #1 marked as PAID (payment: None)
